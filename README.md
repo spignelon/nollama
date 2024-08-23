@@ -33,8 +33,15 @@ While Ollama offers a neat interface for running local LLMs, their performance a
    ```bash
    sudo mv nollama /usr/bin/
    ```
+4. **Run NoLlama:**
 
-4. Run `nollama` from your terminal to start the application.
+    Start NoLlama from the terminal by simply typing:
+
+    ```bash
+    nollama
+    ```
+
+    This will start NoLlama in the default mode.
 
 **Note:** The provided Linux binary is compiled using Python 3.12.4 and requires glibc 2.38+ to run. This may not work on some stable distributions that ship with older packages, such as Debian. In such cases, it is recommended to build from source to ensure compatibility.
 
