@@ -19,29 +19,24 @@ While Ollama offers a neat interface for running local LLMs, their performance a
 - **Experimental Feature:** Enable live streaming of output with the `--stream` flag (unstable).
 - **Anonymous and Private Usage:** Use `torsocks` to route all traffic through the Tor network for privacy.
 
-## Installation
+### Installation
 
-1. **Download the Binary:**
+1. Download the Linux binary from the [releases](https://github.com/your-repo/nollama/releases) page.
+2. Make the binary executable:
 
-    Download the latest binary from the [Releases](https://github.com/spignelon/nollama/releases) page.
+   ```bash
+   chmod +x nollama
+   ```
 
-2. **Move the Binary to `/usr/bin/`:**
+3. Move the binary to `/usr/bin/` for global access:
 
-    After downloading, move the binary to `/usr/bin/` for easy access from anywhere in your terminal:
+   ```bash
+   sudo mv nollama /usr/bin/
+   ```
 
-    ```bash
-    sudo mv nollama /usr/bin/
-    ```
+4. Run `nollama` from your terminal to start the application.
 
-3. **Run NoLlama:**
-
-    Start NoLlama from the terminal by simply typing:
-
-    ```bash
-    nollama
-    ```
-
-    This will start NoLlama in the default mode.
+**Note:** The provided Linux binary is compiled using Python 3.12.4 and requires glibc 2.38+ to run. This may not work on some stable distributions that ship with older packages, such as Debian. In such cases, it is recommended to build from source to ensure compatibility.
 
 ## Building from Source
 
