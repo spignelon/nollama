@@ -2,9 +2,9 @@
 
 NoLlama is a terminal-based interface for interacting with large language models (LLMs) that you can't run locally on your laptop. Inspired by [Ollama](https://ollama.com/), NoLlama provides a streamlined experience for chatting with models like GPT-4o, GPT-4o-mini, Claude 3 haiku, Mixtral, LLaMA 70B, and more, directly from your terminal.
 
-While Ollama offers a neat interface for running local LLMs, their performance and capabilities often fall short of these massive models. NoLlama bridges this gap by allowing you to interact with these powerful models using a lightweight terminal UI, complete with colorful markdown rendering, multiple model choices, and efficient memory usage.
+While Ollama offers a neat interface for running local LLMs, their performance and capabilities often fall short of these massive models. NoLlama bridges this gap by allowing you to interact with these powerful models using a lightweight terminal UI, complete with colorful markdown rendering, multiple model choices (currently 15+ models), and efficient memory usage.
 
-![NoLlama](https://i.imgur.com/Py1qESW.png)
+![NoLlama](https://i.imgur.com/0ZOaXwv.png)
 
 ## Features
 
