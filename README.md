@@ -21,7 +21,7 @@ While Ollama offers a neat interface for running local LLMs, their performance a
 
 ### Installation
 
-1. Download the Linux binary from the [releases](https://github.com/your-repo/nollama/releases) page.
+1. Download the Linux binary from the [releases](https://github.com/spignelon/nollama/releases) page.
 2. Make the binary executable:
 
    ```bash
