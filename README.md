@@ -161,6 +161,10 @@ This will ensure that all your interactions with NoLlama are routed through the 
     nollama --stream
     ```
 
+# Todos
+- [ ] Add context window
+- [ ] Web interface
+
 ## Contribution
 
 Contributions are welcome! If you have suggestions for new features or improvements, feel free to open an issue or submit a pull request.
