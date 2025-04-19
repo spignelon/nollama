@@ -66,7 +66,12 @@ def select_model():
 # Function to handle asking a question
 def ask_question(client, chat, selected_model, stream):
     # Prompt the user for input
-    question = input(">>> ").strip()
+    try:
+        question = input(">>> ").strip()
+    except EOFError:
+        # Handle Ctrl+D
+        console.print("\n[bold red]Exiting the prompt...[/bold red]")
+        sys.exit()
 
     if not question:
         console.print("[bold red]Error: Input is empty. Please type something.[/bold red]")
@@ -108,11 +113,7 @@ def ask_question(client, chat, selected_model, stream):
                 # Got first chunk, can stop spinner now
                 spinner.stop()
                 
-                # Only clear screen after we have content to show
-                console.clear()
-                display_title_and_model(selected_model)
-                console.print(f">>> {question}")
-                
+                # Don't clear screen - preserve chat history
                 # Start with the first chunk we already got
                 chunk_text = first_chunk.text or ""
                 markdown_content = chunk_text
@@ -139,7 +140,7 @@ def ask_question(client, chat, selected_model, stream):
                 response = chat.send_message(question)
                 markdown_content = response.text
             
-            # Only print after spinner is done
+            # Only print after spinner is done - don't clear screen
             console.print(Markdown(markdown_content))
 
     except Exception as e:
@@ -178,6 +179,10 @@ def main():
         while True:
             selected_model, chat = ask_question(client, chat, selected_model, stream=args.stream)
     except KeyboardInterrupt:
+        console.print("\n[bold red]Exiting the prompt...[/bold red]")
+        sys.exit()
+    except EOFError:
+        # Additional handler for Ctrl+D
         console.print("\n[bold red]Exiting the prompt...[/bold red]")
         sys.exit()
 
