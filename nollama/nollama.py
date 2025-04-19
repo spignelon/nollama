@@ -6,10 +6,11 @@ from rich.console import Console
 from rich.markdown import Markdown
 from rich.text import Text
 from rich.live import Live
+from rich.status import Status
 import inquirer
-from yaspin import yaspin
 from google import genai
 from google.genai import types
+import time
 
 # Initialize the rich console
 console = Console()
@@ -94,61 +95,57 @@ def ask_question(client, chat, selected_model, stream):
             chat = client.chats.create(model=new_model)
         return new_model, chat
 
-    # Initialize markdown content
-    markdown_content = ""
-
     try:
         if stream:
-            # Create spinner where the cursor is (after the question)
-            spinner = yaspin(text="Waiting for response...", color="yellow")
-            spinner.start()
+            # Use Rich's status for the spinner - it will appear inline with text
+            status = Status("Waiting for response...")
+            status.start()
             
-            # Initiate the API request with the spinner showing
-            response = chat.send_message_stream(question)
-            
-            # Get first response before stopping spinner
-            response_iterator = iter(response)
             try:
-                first_chunk = next(response_iterator)
-                # Got first chunk, can stop spinner now
-                spinner.stop()
+                # Start the API request
+                response = chat.send_message_stream(question)
                 
-                # Don't clear screen - preserve chat history
-                # Start with the first chunk we already got
-                chunk_text = first_chunk.text or ""
-                markdown_content = chunk_text
+                # For properly displaying streaming content
+                full_response = ""
+                first_chunk = None
                 
-                # Use Live context for remaining chunks
-                with Live(Markdown(markdown_content), console=console, refresh_per_second=10) as live:
-                    # Add the first chunk we already extracted
-                    live.update(Markdown(markdown_content))
+                # Get first chunk before stopping spinner
+                for chunk in response:
+                    first_chunk = chunk
+                    status.stop()
+                    break
+                
+                # Process first chunk if we got one
+                if first_chunk:
+                    chunk_text = first_chunk.text or ""
+                    full_response = chunk_text
                     
-                    # Process the rest of the chunks
-                    for chunk in response_iterator:
-                        chunk_text = chunk.text or ""
-                        markdown_content += chunk_text
-                        live.update(Markdown(markdown_content))
+                    # Start streaming with the first chunk
+                    with Live(Markdown(full_response), refresh_per_second=10) as live:
+                        # Continue with remaining chunks
+                        for chunk in response:
+                            chunk_text = chunk.text or ""
+                            full_response += chunk_text
+                            live.update(Markdown(full_response))
+                else:
+                    # No chunks received
+                    status.stop()
+                    console.print("[yellow]Received empty response[/yellow]")
             
-            except StopIteration:
-                # No response chunks, handle empty response
-                spinner.stop()
-                console.print("[yellow]Received empty response[/yellow]")
+            except Exception as e:
+                status.stop()
+                raise e
                 
         else:
-            # Non-streaming mode with spinner
-            with yaspin(text="Waiting for response...", color="yellow") as spinner:
+            # Non-streaming mode with Rich status
+            with Status("Waiting for response...") as status:
                 response = chat.send_message(question)
                 markdown_content = response.text
             
-            # Only print after spinner is done - don't clear screen
+            # Print the complete response
             console.print(Markdown(markdown_content))
 
     except Exception as e:
-        # If spinner might still be active, stop it
-        try: 
-            spinner.stop()
-        except:
-            pass
         console.print(f"[bold red]An error occurred: {e}[/bold red]")
         return selected_model, chat
 
