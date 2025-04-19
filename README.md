@@ -1,182 +1,79 @@
 # NoLlama
 
-NoLlama is a terminal-based interface for interacting with large language models (LLMs) that you can't run locally on your laptop. Inspired by [Ollama](https://ollama.com/), NoLlama provides a streamlined experience for chatting with models like GPT-4o, GPT-4o-mini, Claude 3 haiku, Mixtral, LLaMA 70B, and more, directly from your terminal.
+NoLlama is a terminal-based interface for interacting with Google's Gemini API directly from your terminal. Inspired by [Ollama](https://ollama.com/), NoLlama provides a streamlined experience for chatting with Gemini models like Gemini 2.0 Flash, Gemini 2.5 Flash Preview, and Gemini 2.5 Pro Preview. **Groq and OpenRouter support will be added soon**.
 
-While Ollama offers a neat interface for running local LLMs, their performance and capabilities often fall short of these massive models. NoLlama bridges this gap by allowing you to interact with these powerful models using a lightweight terminal UI, complete with colorful markdown rendering, multiple model choices (currently 15+ models), and efficient memory usage.
+NoLlama offers a neat terminal interface for powerful language models that aren't easily available for local execution, complete with colorful markdown rendering, multiple model choices, and efficient memory usage.
 
 ![NoLlama](https://i.imgur.com/0ZOaXwv.png)
 
 ## Features
 
-- **Multiple Model Choices:** Switch between various LLMs like GPT-4o, GPT-4o-mini, Mixtral, LLaMA 70B, Claude 3 haiku and more.
+- **Google Gemini Models:** Access to powerful models like Gemini 2.0 Flash, Gemini 2.5 Flash Preview, and Gemini 2.5 Pro Preview.
+- **Multi-turn Conversations:** Maintain context between prompts for more coherent conversations.
 - **Neat Terminal UI:** Enjoy a clean and intuitive interface for your interactions.
-- **Colorful Markdown Rendering:** Unlike Ollama, NoLlama supports rich text formatting in markdown.
-- **Low Memory Usage:** Efficient memory management makes it lightweight compared to using a browser for similar tasks.
+- **Live Streaming Responses:** Watch responses appear in real-time as they're generated.
+- **Colorful Markdown Rendering:** Rich text formatting and syntax highlighting in your terminal.
+- **Low Memory Usage:** Efficient memory management makes it lightweight compared to using a browser.
 - **Easy Model Switching:** Simply type `model` in the chat to switch between models.
 - **Clear Chat History:** Type `clear` to clear the chat history.
-- **Exit Prompt:** Type `q`, `quit`, or `exit` to leave the chat.
-- **Default Mode:** NoLlama runs in standard mode by default—just type `nollama` in the terminal to start.
-- **Experimental Feature:** Enable live streaming of output with the `--stream` flag (unstable).
-- **Anonymous and Private Usage:** Use `torsocks` to route all traffic through the Tor network for privacy.
+- **Exit Commands:** Type `q`, `quit`, or `exit` to leave the chat, or use Ctrl+C or Ctrl+D.
 
-### Installation
+## Setup
 
-1. Download the Linux binary from the [releases](https://github.com/spignelon/nollama/releases) page.
-2. Make the binary executable:
+1. **API Key Configuration:**
+
+   Create a `.nollama` file in your home directory with your Gemini API key:
 
    ```bash
-   chmod +x nollama
+   echo "GEMINI=your_api_key_here" > ~/.nollama
    ```
+   
+   You can get a free API key from [Google AI Studio](https://aistudio.google.com/).
 
-3. Move the binary to `/usr/bin/` for global access:
+2. **Installation:**
+
+   a. Install from PyPI (recommended):
 
    ```bash
-   sudo mv nollama /usr/bin/
+   pip install nollama
    ```
-4. **Run NoLlama:**
 
-    Start NoLlama from the terminal by simply typing:
+   b. Or clone and install from source:
 
-    ```bash
-    nollama
-    ```
+   ```bash
+   git clone https://github.com/spignelon/nollama.git
+   cd nollama
+   pip install -e .
+   ```
 
-    This will start NoLlama in the default mode.
+3. **Run NoLlama:**
 
-**Note:** The provided Linux binary is compiled using Python 3.12.4 and requires glibc 2.38+ to run. This may not work on some stable distributions that ship with older packages, such as Debian. In such cases, it is recommended to build from source to ensure compatibility.
-
-## Building from Source
-
-If you'd like to build NoLlama from source, follow these steps:
-
-1. **Clone the Repository:**
-
-    ```bash
-    git clone https://github.com/spignelon/nollama.git
-    cd nollama
-    ```
-
-2. **Install Dependencies:**
-
-    You can install the required dependencies using `pip`:
-    Creating a python virtual environment:
-    ```bash
-    virtualenv .venv
-    source .venv/bin/activate
-    ```
-
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-3. **Compile the Script (Optional):**
-
-    If you want to compile the script into a standalone executable, you can use PyInstaller:
-
-    First set `version_check: bool = False` in `.venv/lib/python3.12/site-packages/g4f/debug.py`
-
-    Then:
-    ```bash
-    pyinstaller --onefile --name=nollama --collect-all readchar nollama.py
-    ```
-
-4. **Move the Executable to `/usr/bin/`:**
-
-    After compilation, move the binary to `/usr/bin/`:
-
-    ```bash
-    sudo mv dist/nollama /usr/bin/nollama
-    ```
-
-5. **Run NoLlama:**
-
-    Start NoLlama by typing:
-
-    ```bash
-    nollama
-    ```
+   ```bash
+   nollama
+   ```
 
 ## Usage
 
-- **Switch Models:** Type `model` in the chat to choose a different LLM.
+- **Select a Model:** At startup, choose from available Gemini models.
+- **Chat Normally:** Type your questions and see the responses with rich formatting.
+- **Switch Models:** Type `model` in the chat to choose a different model.
 - **Clear Chat:** Type `clear` to clear the chat history.
-- **Exit:** Type `q`, `quit`, or `exit` to leave the chat.
-- **Default Mode:** Run NoLlama without any flags for standard operation:
-
-    ```bash
-    nollama
-    ```
-
-## Anonymous and Private Usage
-
-For enhanced privacy and anonymity, you can use `torsocks` to route NoLlama's traffic through the Tor network. This ensures that all requests are anonymized and cannot be traced back to you.
-
-### Step 1: Install Tor
-
-#### Debian/Ubuntu:
-
-```bash
-sudo apt update
-sudo apt install tor
-```
-
-#### Arch Linux:
-
-```bash
-sudo pacman -S tor
-```
-
-#### Fedora:
-
-```bash
-sudo dnf install tor
-```
-
-### Step 2: Enable and Start Tor
-
-After installation, you need to enable and start the Tor service:
-
-```bash
-sudo systemctl enable tor
-sudo systemctl start tor
-```
-
-### Step 3: Run NoLlama with Tor
-
-Once Tor is running, you can use `torsocks` to run NoLlama anonymously:
-
-```bash
-torsocks nollama
-```
-
-This will ensure that all your interactions with NoLlama are routed through the Tor network, providing a layer of privacy and anonymity.
-
-## Experimental Feature
-
-- **Streaming Mode:**
-
-    NoLlama includes an experimental streaming mode that allows you to see responses as they are generated. This mode is currently unstable and may cause issues. To enable streaming, use the `--stream` flag:
-
-    ```bash
-    nollama --stream
-    ```
+- **Exit:** Type `q`, `quit`, or `exit` to leave the chat, or press Ctrl+C or Ctrl+D.
 
 # Todos
-- [ ] Add context window
+- [x] Add context window
 - [ ] Web interface
+- [ ] Add support for Groq
+- [ ] Add support for OpenRouter
+- [ ] Support for APIs
 
 ## Contribution
 
 Contributions are welcome! If you have suggestions for new features or improvements, feel free to open an issue or submit a pull request.
 
-## Acknowledgments
-
-- **[g4f](https://pypi.org/project/g4f/):** Used for connecting to various LLMs.
-- **[Python Rich](https://pypi.org/project/rich/):** Used for colorful markdown rendering and improved terminal UI.
-
 ## Disclaimer
 
-NoLlama is not affiliated with Ollama. It is an independent project inspired by the concept of providing a neat terminal interface for interacting with language models, particularly those that are too large to run locally on typical consumer hardware or not available for self hosting.
+NoLlama is not affiliated with Ollama. It is an independent project inspired by the concept of providing a neat terminal interface for interacting with language models.
 
 ## License
 
