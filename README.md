@@ -1,6 +1,6 @@
 # NoLlama
 
-NoLlama is a terminal-based interface for interacting with Google's Gemini API directly from your terminal. Inspired by [Ollama](https://ollama.com/), NoLlama provides a streamlined experience for chatting with Gemini models like Gemini 2.0 Flash, Gemini 2.5 Flash Preview, and Gemini 2.5 Pro Preview. **Groq and OpenRouter support will be added soon**.
+NoLlama is a terminal-based interface for interacting with Google's Gemini API directly from your terminal. Inspired by [Ollama](https://ollama.com/), NoLlama provides a streamlined experience for chatting with Gemini models like Gemini 2.0 Flash, Gemini 2.5 Flash Preview, and Gemini 2.5 Pro Preview. **Ollama, Groq and OpenRouter support will be added soon**.
 
 NoLlama offers a neat terminal interface for powerful language models that aren't easily available for local execution, complete with colorful markdown rendering, multiple model choices, and efficient memory usage.
 
