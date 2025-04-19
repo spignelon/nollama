@@ -28,7 +28,7 @@ editor
 fastapi
 Flask
 frozenlist
-g4f
+google-genai
 h11
 idna
 inquirer
