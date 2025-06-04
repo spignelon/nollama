@@ -51,9 +51,9 @@ def initialize_client():
     return client
 
 # Function to display the title and model
-def display_title_and_model(selected_model):
+def display_title_and_model(model_name):
     title = Text("nollama", style="bold red underline")
-    model_text = Text(f"Model: {selected_model}", style="bold yellow")
+    model_text = Text(f"Model: {model_name}", style="bold yellow")
     console.print(title, justify="center")
     console.print(model_text, justify="right")
 
@@ -65,10 +65,12 @@ def select_model():
                       choices=list(models.keys()))
     ]
     answer = inquirer.prompt(questions)
-    return models[answer['model']]
+    model_name = answer['model']
+    model_id = models[model_name]
+    return model_name, model_id
 
 # Function to handle asking a question
-def ask_question(client, chat, selected_model, stream):
+def ask_question(client, chat, model_name, model_id, stream):
     # Prompt the user for input
     try:
         question = input(">>> ").strip()
@@ -79,7 +81,7 @@ def ask_question(client, chat, selected_model, stream):
 
     if not question:
         console.print("[bold red]Error: Input is empty. Please type something.[/bold red]")
-        return selected_model, chat
+        return model_name, model_id, chat
 
     if question.lower() in ["quit", "exit", "q"]:
         console.print("[bold red]Exiting the prompt...[/bold red]")
@@ -87,16 +89,20 @@ def ask_question(client, chat, selected_model, stream):
     
     if question.lower() == "clear":
         console.clear()
-        display_title_and_model(selected_model)
+        display_title_and_model(model_name)
         # Create a new chat session when clearing
-        chat = client.chats.create(model=selected_model)
-        return selected_model, chat
+        chat = client.chats.create(model=model_id)
+        return model_name, model_id, chat
 
     if question.lower() == "model":
-        new_model = select_model()
-        if new_model != selected_model:
-            chat = client.chats.create(model=new_model)
-        return new_model, chat
+        new_model_name, new_model_id = select_model()
+        if new_model_id != model_id:
+            chat = client.chats.create(model=new_model_id)
+            model_name = new_model_name
+            model_id = new_model_id
+        console.clear()
+        display_title_and_model(model_name)
+        return model_name, model_id, chat
 
     try:
         if stream:
@@ -150,11 +156,11 @@ def ask_question(client, chat, selected_model, stream):
 
     except Exception as e:
         console.print(f"[bold red]An error occurred: {e}[/bold red]")
-        return selected_model, chat
+        return model_name, model_id, chat
 
     # After response is complete, print a newline for separation
     console.print()
-    return selected_model, chat
+    return model_name, model_id, chat
 
 # Main loop to keep asking questions
 def main():
@@ -169,15 +175,15 @@ def main():
     # Have user select model at startup
     console.print("[bold blue]Welcome to nollama - Gemini API Terminal Interface[/bold blue]")
     console.print("[yellow]Please select a model to get started:[/yellow]")
-    selected_model = select_model()
-    chat = client.chats.create(model=selected_model)
+    model_name, model_id = select_model()
+    chat = client.chats.create(model=model_id)
     
     console.clear()
-    display_title_and_model(selected_model)
+    display_title_and_model(model_name)
 
     try:
         while True:
-            selected_model, chat = ask_question(client, chat, selected_model, stream=args.stream)
+            model_name, model_id, chat = ask_question(client, chat, model_name, model_id, stream=args.stream)
     except KeyboardInterrupt:
         console.print("\n[bold red]Exiting the prompt...[/bold red]")
         sys.exit()
