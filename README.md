@@ -65,7 +65,8 @@ NoLlama offers a neat terminal interface for powerful language models that aren'
 - [ ] Web interface
 - [ ] Add support for Groq
 - [ ] Add support for OpenRouter
-- [ ] Support for APIs
+- [ ] Add support for Ollama API
+- [ ] Support for custom APIs
 
 ## Contribution
 
