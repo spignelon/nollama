@@ -1,6 +1,6 @@
 aiohttp
 certifi
-google-genai
+litellm
 inquirer
 pygments
 rich
