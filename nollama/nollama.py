@@ -316,37 +316,50 @@ def ask_question(provider_name, model_display_name, full_model_name, messages, s
                 )
                 
                 full_response = ""
-                first_chunk = None
+                first_chunk_received = False
                 
-                # Get first chunk before stopping spinner
+                # Collect and stream chunks as plain text for real-time feedback
                 for chunk in response:
-                    first_chunk = chunk
-                    status.stop()
-                    break
+                    if hasattr(chunk.choices[0].delta, 'content') and chunk.choices[0].delta.content:
+                        chunk_text = chunk.choices[0].delta.content
+                        full_response += chunk_text
+                        
+                        # Stop spinner on first chunk
+                        if not first_chunk_received:
+                            status.stop()
+                            first_chunk_received = True
+                        
+                        # Stream text in real-time
+                        print(chunk_text, end='', flush=True)
                 
-                # Process first chunk if we got one
-                if first_chunk:
-                    chunk_text = first_chunk.choices[0].delta.content or ""
-                    full_response = chunk_text
-                    
-                    # Start streaming with the first chunk
-                    with Live(Markdown(full_response), refresh_per_second=10) as live:
-                        # Continue with remaining chunks
-                        for chunk in response:
-                            chunk_text = chunk.choices[0].delta.content or ""
-                            full_response += chunk_text
-                            live.update(Markdown(full_response))
-                else:
-                    # No chunks received
+                # Print newline after streaming
+                print()
+                
+                # Stop spinner if still running
+                if not first_chunk_received and status._live.is_started:
                     status.stop()
+                
+                if not full_response:
                     console.print("[yellow]Received empty response[/yellow]")
+                else:
+                    # Now render the complete response as markdown
+                    console.print("\n[dim]Rendering markdown...[/dim]")
+                    # Move cursor up and clear the line
+                    print("\033[F\033[K", end='')
+                    # Clear the plain text output (move up by number of lines)
+                    lines_to_clear = full_response.count('\n') + 1
+                    for _ in range(lines_to_clear):
+                        print("\033[F\033[K", end='')
+                    # Now render the beautiful markdown
+                    console.print(Markdown(full_response))
                 
                 # Add assistant response to message history
                 if full_response:
                     messages.append({"role": "assistant", "content": full_response})
             
             except Exception as e:
-                status.stop()
+                if status._live.is_started:
+                    status.stop()
                 raise e
                 
         else:
