@@ -13,7 +13,7 @@ def load_requirements(filename):
 
 setup(
     name="nollama",
-    version="0.4",
+    version="0.5",
     packages=find_packages(),
     install_requires=load_requirements("requirements.txt"),
     entry_points={
@@ -29,13 +29,13 @@ setup(
     author_email="spignelon@proton.me",
     license="GPL-3.0",
     classifiers=[
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
-        "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
     ],
-    python_requires=">=3.9",
+    python_requires=">=3.10",
 )
