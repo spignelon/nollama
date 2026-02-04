@@ -275,6 +275,9 @@ def ask_question(provider_name, model_display_name, full_model_name, messages, s
     if question.lower() == "clear":
         console.clear()
         display_title_and_info(provider_name, model_display_name)
+        # Display available commands after clearing
+        console.print("[dim]Commands: 'model' to change model | 'provider' to change provider | 'clear' to clear history | 'quit/exit/q' to exit[/dim]")
+        console.print()
         # Create a new message history when clearing
         messages = []
         return provider_name, model_display_name, full_model_name, messages
