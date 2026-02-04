@@ -1,6 +1,8 @@
 aiohttp
 certifi
 litellm
+python-dotenv
+prompt_toolkit
 inquirer
 pygments
 rich
