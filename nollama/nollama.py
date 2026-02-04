@@ -68,6 +68,49 @@ PROVIDERS = {
     },
 }
 
+# Get maximum multiturn pairs setting from environment
+def get_max_multiturn_pairs():
+    """Get the maximum number of conversation pairs to keep in multi-turn context.
+    Returns None for unlimited, or an integer for the limit."""
+    max_pairs = os.environ.get('MAX_MULTITURN_PAIRS', '0')
+    try:
+        pairs = int(max_pairs)
+        return None if pairs <= 0 else pairs
+    except ValueError:
+        return None
+
+# Function to trim messages to keep only recent context
+def trim_messages(messages, max_pairs=None):
+    """Trim messages array to keep only the last N conversation pairs.
+    A pair is one user message + one assistant response.
+    """
+    if max_pairs is None or max_pairs <= 0 or len(messages) == 0:
+        return messages
+    
+    # Check if the last message is a user message (current question, not yet answered)
+    # If so, we need to keep N complete pairs PLUS this current user message
+    last_is_user = messages[-1].get('role') == 'user'
+    
+    if last_is_user:
+        # Keep N complete pairs + current user message = (N * 2) + 1 messages
+        max_messages = (max_pairs * 2) + 1
+    else:
+        # Keep N complete pairs = N * 2 messages
+        max_messages = max_pairs * 2
+    
+    # If we have fewer messages than the limit, return all
+    if len(messages) <= max_messages:
+        return messages
+    
+    # Keep only the last N pairs (+ current user message if applicable)
+    trimmed = messages[-max_messages:]
+    
+    # Ensure we start with a user message (sanity check)
+    if trimmed and trimmed[0].get('role') == 'assistant':
+        trimmed = trimmed[1:]
+    
+    return trimmed
+
 # Function to load environment variables from .env or ~/.nollama
 def load_config():
     # First try to load from .env in the current directory or project root
@@ -301,6 +344,10 @@ def ask_question(provider_name, model_display_name, full_model_name, messages, s
     # Add user message to history
     messages.append({"role": "user", "content": question})
 
+    # Get max multiturn pairs setting and trim messages if needed
+    max_multiturn_pairs = get_max_multiturn_pairs()
+    trimmed_messages = trim_messages(messages, max_multiturn_pairs)
+
     try:
         if stream:
             # Use Rich's status for the spinner
@@ -311,7 +358,7 @@ def ask_question(provider_name, model_display_name, full_model_name, messages, s
                 # Start the API request with streaming
                 response = completion(
                     model=full_model_name,
-                    messages=messages,
+                    messages=trimmed_messages,
                     stream=True
                 )
                 
@@ -354,7 +401,7 @@ def ask_question(provider_name, model_display_name, full_model_name, messages, s
             with Status("Waiting for response...") as status:
                 response = completion(
                     model=full_model_name,
-                    messages=messages
+                    messages=trimmed_messages
                 )
                 markdown_content = response.choices[0].message.content
             
