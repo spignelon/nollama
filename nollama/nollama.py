@@ -9,12 +9,17 @@ from rich.live import Live
 from rich.status import Status
 import inquirer
 from litellm import completion, acompletion, get_valid_models
+import litellm
 from dotenv import load_dotenv
 import json
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import WordCompleter
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.keys import Keys
+
+# Suppress LiteLLM's verbose debug output
+litellm.suppress_debug_info = True
+litellm.set_verbose = False
 
 # Initialize the rich console
 console = Console()
